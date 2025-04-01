@@ -90,7 +90,10 @@ order by INSTALLATEDON desc;
 /* 13
 Listar los distintos GUIDs de los componentes del facility 1 ordenados ascendentemente por fecha de garantía.
 */
-
+SELECT DISTINCT GUID
+FROM Componentes
+WHERE FacilityID = 1
+ORDER BY FechaGarantia ASC;
 
 /* 14
 Id, código de activo, GUID, número de serie y nombre de los componentes cuyo spaceid está entre 10 y 27 inclusive
@@ -124,7 +127,10 @@ Las distintas fechas de instalación de los componentes
 de los espacios con id 10, 12, 16, 19 
 ordenadas descendentemente.
 */
-
+SELECT DISTINCT FechaInstalacion
+FROM Componentes
+WHERE SpaceID IN (10, 12, 16, 19)
+ORDER BY FechaInstalacion DESC;
 /* 18
 Nombre, volumen, de los espacios
 cuyo volumen es mayor a 90 de floorid = 1
@@ -184,7 +190,11 @@ Lista de tipos de componente del facility 1
 donde el nombre contiene el texto 'con'
 y no tienen vida útil indicada o fecha de garantia 
 */
-
+SELECT DISTINCT TipoComponente
+FROM Componentes
+WHERE FacilityID = 1
+AND Nombre LIKE '%con%'
+AND (VidaUtil IS NULL OR FechaGarantia IS NULL);
 /* 25
 Nombres de espacios y volumen
 pero como volumen una etiqueta que indique 
@@ -207,7 +217,10 @@ Nombre, fecha de instalación, fecha de garantia
 de los componentes del facility 1
 que tienen fecha de garantia
 */
-
+SELECT Nombre, FechaInstalacion, FechaGarantia
+FROM Componentes
+WHERE FacilityID = 1
+  AND FechaGarantia IS NOT NULL;
 /* 27
 Lista de nombres de espacio que su id no es 4, 9, ni 19
 del floorid 1
@@ -233,12 +246,18 @@ tenga otra palabra podriamos poner: name not like '%Aula%' */
 Lista de los tipos de componentes que tienen duracion de la garantia de las partes
 del facility 1
 */
-
+SELECT DISTINCT TipoComponente
+FROM Componentes
+WHERE FacilityID = 1
+  AND DuracionGarantia IS NOT NULL;
 /* 30
 Lista de los tipos de componentes que no tiene el coste de repuesto
 del facility 1
 */
-
+SELECT DISTINCT TipoComponente
+FROM Componentes
+WHERE FacilityID = 1
+  AND CosteRepuesto IS NULL;
 /* 31
 Lista de los tipos de componentes que tienen en el nombre un guión bajo
 del facility 1
