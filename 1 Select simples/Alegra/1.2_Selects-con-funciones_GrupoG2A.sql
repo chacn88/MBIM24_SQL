@@ -22,7 +22,14 @@ from dual;
 Día en palabras de cuando se instalaron los componentes
 del facility 1
 */
-
+SELECT 
+    INITCAP(TO_CHAR(components.installatedOn, 'Day')) AS "Día de instalación",
+    components.name AS "Componente"
+FROM components
+JOIN spaces ON components.spaceId = spaces.id
+JOIN floors ON spaces.floorId = floors.id
+JOIN facilities ON floors.facilityId = facilities.id
+WHERE facilities.id = 1;
 /* 3
 De los espacios, obtener la suma de áreas, cuál es el mínimo, el máximo y la media de áreas
 del floorid 1. Redondeado a dos dígitos.
@@ -50,7 +57,12 @@ Mostrar tres medias que llamaremos:
 de los espacios del floorid 1
 Solo la parte entera, sin decimales ni redondeo.
 */
-
+SELECT 
+    TRUNC(AVG(netarea)) AS Media, 
+    TRUNC((AVG(netarea) + MIN(netarea)) / 2) AS MediaBaja, 
+    TRUNC((AVG(netarea) + MAX(netarea)) / 2) AS MediaAlta  
+FROM spaces
+WHERE floorId = 1;
 /* 6
 Cuántos componentes hay, cuántos tienen fecha inicio de garantia, cuántos tienen espacio, y en cuántos espacios hay componentes
 en el facility 1.
@@ -67,6 +79,12 @@ where floorid in(1,2,3,4); /* el "in" sustituye a poner "or"*/
 Mostrar cuántos espacios tienen el texto 'Aula' en el nombre
 del facility 1.
 */
+SELECT COUNT(s.id) AS TotalAulas
+FROM spaces s
+JOIN floors f ON s.floorId = f.id
+JOIN facilities fa ON f.facilityId = fa.id
+WHERE fa.id = 1
+AND LOWER(s.name) LIKE '%aula%';
 
 /* 8
 Mostrar el porcentaje de componentes que tienen fecha de inicio de garantía
@@ -88,6 +106,10 @@ Pasi
 Pati
 Serv
 */
+SELECT DISTINCT SUBSTR(name, 1, 4) AS NombreCorto
+FROM spaces
+WHERE floorId = 1
+ORDER BY NombreCorto ASC;
 
 /* 10
 Número de componentes por fecha de instalación del facility 1
@@ -98,7 +120,17 @@ Fecha   Componentes
 2021-03-23 34
 2021-03-03 232
 */
-
+SELECT 
+    c.installatedOn AS FechaInstalacion, 
+    COUNT(c.id) AS NumeroComponentes
+FROM components c
+JOIN spaces s ON c.spaceId = s.id
+JOIN floors f ON s.floorId = f.id
+JOIN facilities fa ON f.facilityId = fa.id
+WHERE fa.id = 1
+AND c.installatedOn IS NOT NULL
+GROUP BY c.installatedOn
+ORDER BY c.installatedOn DESC;
 /* 11
 Un listado por año del número de componentes instalados del facility 1
 ordenados descendentemente por año.
@@ -108,7 +140,17 @@ Año Componentes
 2021 344
 2020 2938
 */
-
+SELECT 
+    c.installatedOn AS FechaInstalacion, 
+    COUNT(c.id) AS NumeroComponentes
+FROM components c
+JOIN spaces s ON c.spaceId = s.id
+JOIN floors f ON s.floorId = f.id
+JOIN facilities fa ON f.facilityId = fa.id
+WHERE fa.id = 1
+AND c.installatedOn IS NOT NULL
+GROUP BY c.installatedOn
+ORDER BY c.installatedOn DESC;
 /* 12
 Nombre del día de instalación y número de componentes del facility 1.
 ordenado de lunes a domingo
@@ -152,6 +194,13 @@ Aula 23
 Aseo 12
 Pasi 4
 */
+SELECT 
+    SUBSTR(s.name, 1, 4) AS NombreCorto, 
+    COUNT(s.id) AS NumeroEspacios
+FROM spaces s
+WHERE s.floorId = 1
+GROUP BY SUBSTR(s.name, 1, 4)
+ORDER BY NombreCorto ASC;
 
 /*14
 Cuántos componentes de instalaron un Jueves
@@ -168,9 +217,6 @@ seguido del id de espacio concatenado con un guión
 y seguido del nombre del espacio.
 el id del espacio debe tener una longitud de 3 caracteres
 Ej. 3-004-Nombre
-*/
-
-
 /* Sacar name de facilities, floors and spaces */
 select facilities.name,
 floors.name,
