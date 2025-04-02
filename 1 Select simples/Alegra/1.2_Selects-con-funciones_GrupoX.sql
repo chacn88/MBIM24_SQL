@@ -19,6 +19,7 @@ SELECT
     TO_CHAR(SYSDATE, 'YYYY') || '. ' || 
     TO_CHAR(SYSDATE, 'HH24:MI:SS') AS "Fecha actual"
 FROM DUAL;
+
 /* 2
 Día en palabras de cuando se instalaron los componentes
 del facility 1
